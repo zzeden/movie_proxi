@@ -4,6 +4,15 @@ SERVER_PORT = 92
 SERVER_ADDRESS = "54.71.128.194"
 CLIENT_PORT = 9090
 
+def error_fix(data):
+    error = '#'
+    error_index = data.index(error)
+    new_data = 'ERROR' + data[error_index:]
+    return new_data
+
+#no results - 'ERROR#"No movie found"'
+#crash -fff
+
 def picture_fix(data: str):
     jpg = 'jpg'
     jpg_index = data.index(jpg)
@@ -26,9 +35,12 @@ def main():
         sock_server.send(data_from_client)
         response_from_server = sock_server.recv(1024)
         response_from_server = response_from_server.decode()
-        fixed_picture = picture_fix(response_from_server)
-        fixed_picture = fixed_picture.encode()
-        conn_client.send(fixed_picture)
+        if response_from_server.index('ERROR') == 0 or response_from_server.index('ERROR') == 6:
+            response_from_server = error_fix(response_from_server)
+        else:
+            response_from_server = picture_fix(response_from_server)
+        response_from_server = response_from_server.encode()
+        conn_client.send(response_from_server)
 
     conn_client.close()
     sock_server.close()
