@@ -35,7 +35,8 @@ def main():
         sock_server.send(data_from_client)
         response_from_server = sock_server.recv(1024)
         response_from_server = response_from_server.decode()
-        if response_from_server.index('ERROR') == 0 or response_from_server.index('ERROR') == 6:
+        error_index = response_from_server.find('ERROR')
+        if error_index == 0 or error_index == 6:
             response_from_server = error_fix(response_from_server)
         else:
             response_from_server = picture_fix(response_from_server)
